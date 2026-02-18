@@ -12,7 +12,10 @@ export async function addClient(cliente) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cliente),
   });
-  if (!res.ok) throw new Error("Error al agregar cliente");
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
+  }
 }
 
 export async function updateClient(cliente) {
@@ -21,7 +24,10 @@ export async function updateClient(cliente) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(cliente),
   });
-  if (!res.ok) throw new Error("Error al actualizar cliente");
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
+  }
 }
 
 export async function deleteClient(id) {

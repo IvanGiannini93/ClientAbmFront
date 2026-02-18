@@ -12,7 +12,10 @@ function ClienteFormModal({ show, onHide, onSave, editingClient }) {
     email: "",
   });
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
+    setError("");
     if (editingClient) {
       setForm(editingClient);
     } else {
@@ -32,10 +35,20 @@ function ClienteFormModal({ show, onHide, onSave, editingClient }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(form);
-    onHide();
+    setError("");
+    try {
+      await onSave(form);
+      onHide();
+    } catch (err) {
+      if (err && err.message) {
+        setError(err.message || "Error al guardar");
+      } else {
+        setError("Error inesperado");
+      }
+    }
+    
   };
 
   return (
@@ -46,6 +59,11 @@ function ClienteFormModal({ show, onHide, onSave, editingClient }) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        {error && (
+          <div className="text-danger mb-2">
+            {error}
+          </div>
+        )}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-2">
             <Form.Label>Nombres</Form.Label>
